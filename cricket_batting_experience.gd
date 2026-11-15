@@ -54,7 +54,7 @@ func _ready() -> void:
 	bowl_button.pressed.connect(_bowl)
 	controls.add_child(bowl_button)
 
-	score_label.position = Vector2(20, 220)
+	score_label.position = Vector2(20, 260)
 	score_label.add_theme_font_size_override("font_size", 28)
 	hud.add_child(score_label)
 
