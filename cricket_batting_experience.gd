@@ -13,7 +13,9 @@ func _process(delta: float):
 		cooldown = 1
 		if ball_in_zone:
 			print("HIT")
-			$Ball.linear_velocity = Vector3()
+			$Ball.linear_velocity = Vector3(45, 15, -40)
+			$HitSound.stream = load("res://screen-charm-recording.mp3")
+			$HitSound.play()
 		else:
 			print("MISSED")
 
