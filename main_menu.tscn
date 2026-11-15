@@ -23,6 +23,13 @@ Button/font_sizes/font_size = 23
 Button/styles/hover = SubResource("ButtonHover")
 Button/styles/normal = SubResource("ButtonNormal")
 
+[sub_resource type="LabelSettings" id="LabelSettings_7vrkn"]
+font_size = 50
+font_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_06t4h"]
+font_color = Color(0, 0, 0, 1)
+
 [node name="MainMenu" type="Control" unique_id=1932335849]
 layout_mode = 3
 anchors_preset = 15
@@ -41,7 +48,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.04, 0.09, 0.07, 1)
 
 [node name="Center" type="CenterContainer" parent="." unique_id=2041293345]
 layout_mode = 1
@@ -61,6 +67,7 @@ layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.86, 0.59, 1)
 theme_override_font_sizes/font_size = 56
 text = "Cricket"
+label_settings = SubResource("LabelSettings_7vrkn")
 
 [node name="SingleMode" type="VBoxContainer" parent="Center/Modes" unique_id=1554597614]
 layout_mode = 2
@@ -70,11 +77,6 @@ theme_override_constants/separation = 7
 custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 text = "Single"
-
-[node name="Description" type="Label" parent="Center/Modes/SingleMode" unique_id=137405977]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.72, 0.82, 0.75, 1)
-text = "Bowl and bat on this device."
 
 [node name="DoubleMode" type="VBoxContainer" parent="Center/Modes" unique_id=1438391283]
 layout_mode = 2
@@ -89,6 +91,7 @@ text = "Double"
 layout_mode = 2
 theme_override_colors/font_color = Color(0.72, 0.82, 0.75, 1)
 text = "Host or join a match on the same Wi-Fi."
+label_settings = SubResource("LabelSettings_06t4h")
 
 [connection signal="pressed" from="Center/Modes/SingleMode/Single" to="." method="_play_single"]
 [connection signal="pressed" from="Center/Modes/DoubleMode/Double" to="." method="_play_double"]
