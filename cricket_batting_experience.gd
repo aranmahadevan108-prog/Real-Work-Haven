@@ -95,11 +95,11 @@ func _process(delta: float):
 	cooldown -= delta
 	if local_swing and Input.is_action_just_pressed("swing"):
 		swing()
-
 func swing() -> void:
 	if cooldown > 0:
 		return
 	cooldown = 1
+	swing_bat()
 	if ball_in_zone:
 		print("HIT")
 		ball.linear_velocity = Vector3(45, 15, -40)
@@ -121,3 +121,8 @@ func _on_stumps_body_entered(body: Node3D) -> void:
 	if body == $Ball:
 		wickets += 1
 		print("OUT! Wickets: ", wickets)
+
+func swing_bat():
+	var tween = create_tween()
+	tween.tween_property($Batsman/BatPivot, "rotation_degrees:y", -100, 0.12)
+	tween.tween_property($Batsman/BatPivot, "rotation_degrees:y", 0, 0.25)
