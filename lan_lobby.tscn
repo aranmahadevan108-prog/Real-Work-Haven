@@ -22,7 +22,7 @@ text = "Host as bowler"
 
 [node name="Address" type="LineEdit" parent="UI/Lobby/Controls"]
 layout_mode = 2
-placeholder_text = "Host IP address"
+placeholder_text = "Join code or host IP"
 
 [node name="Join" type="Button" parent="UI/Lobby/Controls"]
 layout_mode = 2

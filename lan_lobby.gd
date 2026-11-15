@@ -17,9 +17,9 @@ var in_play := false
 
 func _ready() -> void:
 	multiplayer.peer_connected.connect(_on_peer_connected)
-	multiplayer.peer_disconnected.connect(func(_id: int): _leave("Player disconnected."))
-	multiplayer.connection_failed.connect(func(): _leave("Could not connect. Check the host IP."))
-	multiplayer.server_disconnected.connect(func(): _leave("Host disconnected."))
+	multiplayer.peer_disconnected.connect(func(_id: int): _leave("Player disconnected."), CONNECT_DEFERRED)
+	multiplayer.connection_failed.connect(func(): _leave("Could not connect. Check the code and Wi-Fi."), CONNECT_DEFERRED)
+	multiplayer.server_disconnected.connect(func(): _leave("Host disconnected."), CONNECT_DEFERRED)
 	$UI/Lobby/Controls/Host.pressed.connect(_connect_game.bind(true))
 	$UI/Lobby/Controls/Join.pressed.connect(_connect_game.bind(false))
 	swing_button.pressed.connect(_send_swing)
@@ -27,16 +27,34 @@ func _ready() -> void:
 func _connect_game(host: bool) -> void:
 	if multiplayer.multiplayer_peer is ENetMultiplayerPeer:
 		return
-	if not host and address.text.strip_edges().is_empty():
-		status.text = "Enter the host IP address."
-		return
+	var host_ip := address.text.strip_edges()
+	if not host and not host_ip.is_valid_ip_address():
+		if host_ip.length() != 8 or not host_ip.is_valid_hex_number() or host_ip[0] in ["+", "-"]:
+			status.text = "Enter the eight-character join code or host IP."
+			return
+		host_ip = "%d.%d.%d.%d" % Array(host_ip.hex_decode())
 	var peer := ENetMultiplayerPeer.new()
-	var result := peer.create_server(PORT, 1) if host else peer.create_client(address.text.strip_edges(), PORT)
+	var result := peer.create_server(PORT, 1) if host else peer.create_client(host_ip, PORT)
 	if result != OK:
 		status.text = error_string(result)
 		return
 	multiplayer.multiplayer_peer = peer
-	status.text = "Waiting for batter on port %d…" % PORT if host else "Connecting…"
+	status.text = "Connecting…"
+	if host:
+		address.text = _join_code()
+		address.editable = false
+		status.text = "Waiting for batter. Share the code above." if not address.text.is_empty() else "Waiting for batter. Share your local IP."
+
+func _join_code() -> String:
+	var addresses := IP.get_local_addresses()
+	for network in IP.get_local_interfaces():
+		if network["name"] in ["en0", "wlan0"]:
+			addresses = PackedStringArray(network["addresses"]) + addresses
+	for ip in addresses:
+		if "." in ip and ":" not in ip and not ip.begins_with("127.") and not ip.begins_with("169.254."):
+			var octets := Array(ip.split(".")).map(func(part: String) -> int: return int(part))
+			return PackedByteArray(octets).hex_encode().to_upper()
+	return ""
 
 func _on_peer_connected(id: int) -> void:
 	if multiplayer.is_server():
@@ -125,4 +143,5 @@ func _leave(message: String) -> void:
 	batting.hide()
 	over_label.hide()
 	lobby.show()
+	address.editable = true
 	status.text = message
