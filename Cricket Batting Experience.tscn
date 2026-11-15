@@ -51,6 +51,21 @@ height = 0.8
 [sub_resource type="BoxShape3D" id="BoxShape3D_ovdqq"]
 size = Vector3(0.3, 0.8, 0.2)
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_dmg41"]
+radius = 0.25
+height = 1.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_tt6d3"]
+radius = 0.15
+height = 0.3
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tt6d3"]
+albedo_color = Color(1, 0.78431374, 0.60784316, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_dmg41"]
+material = SubResource("StandardMaterial3D_tt6d3")
+size = Vector3(0.1, 0.8, 0.05)
+
 [node name="CricketBattingExperience" type="Node3D" unique_id=1773417177]
 script = ExtResource("1_c7icq")
 
@@ -110,6 +125,24 @@ mesh = SubResource("CylinderMesh_ovdqq")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Stumps" unique_id=965418525]
 shape = SubResource("BoxShape3D_ovdqq")
+
+[node name="Batsman" type="Node3D" parent="." unique_id=1369753202]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0.3)
+
+[node name="Body" type="MeshInstance3D" parent="Batsman" unique_id=2122908926]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("CapsuleMesh_dmg41")
+
+[node name="Head" type="MeshInstance3D" parent="Batsman" unique_id=184783177]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
+mesh = SubResource("SphereMesh_tt6d3")
+
+[node name="BatPivot" type="Node3D" parent="Batsman" unique_id=951072029]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.3, 1, 0)
+
+[node name="Bat" type="MeshInstance3D" parent="Batsman/BatPivot" unique_id=1222094059]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+mesh = SubResource("BoxMesh_dmg41")
 
 [connection signal="body_entered" from="HitZone" to="." method="_on_hit_zone_body_entered"]
 [connection signal="body_exited" from="HitZone" to="." method="_on_hit_zone_body_exited"]
