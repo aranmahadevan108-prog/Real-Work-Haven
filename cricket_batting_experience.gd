@@ -1,7 +1,7 @@
 extends Node3D
 
 signal delivery_finished
-
+var runs = 0
 var ball_in_zone = false
 var cooldown = 0
 var wickets = 0
@@ -15,6 +15,7 @@ var meter := HSlider.new()
 var bowl_button := Button.new()
 var meter_time := 0.0
 var spin := 0.0
+var score_label := Label.new()
 
 func _ready() -> void:
 	ball.freeze = true
@@ -53,6 +54,10 @@ func _ready() -> void:
 	bowl_button.pressed.connect(_bowl)
 	controls.add_child(bowl_button)
 
+	score_label.position = Vector2(20, 220)
+	score_label.add_theme_font_size_override("font_size", 28)
+	hud.add_child(score_label)
+
 func _bowl() -> void:
 	var timing := 1.0 - absf(meter.value * 2.0 - 1.0)
 	bowl(bowl_type.selected, timing)
@@ -81,6 +86,22 @@ func _on_ball_bounce(body: Node) -> void:
 		spin = 0.0
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float):
+	score_label.text = "Runs: " + str(runs) + "  Wickets: " + str(wickets)
+
+	# arrow keys move the camera, W/S move it forward/back
+	var cam = $Camera3D
+	if Input.is_key_pressed(KEY_LEFT):
+		cam.position.x -= 3 * delta
+	if Input.is_key_pressed(KEY_RIGHT):
+		cam.position.x += 3 * delta
+	if Input.is_key_pressed(KEY_UP):
+		cam.position.y += 3 * delta
+	if Input.is_key_pressed(KEY_DOWN):
+		cam.position.y -= 3 * delta
+	if Input.is_key_pressed(KEY_W):
+		cam.position.z -= 3 * delta
+	if Input.is_key_pressed(KEY_S):
+		cam.position.z += 3 * delta
 	if not bowl_button.disabled:
 		meter_time += delta
 		meter.value = pingpong(meter_time, 1.0)
@@ -95,6 +116,7 @@ func swing() -> void:
 	swing_bat()
 	if ball_in_zone:
 		print("HIT")
+		runs += 6
 		ball.linear_velocity = Vector3(45, 15, -40)
 		$HitSound.stream = load("res://screen-charm-recording.mp3")
 		$HitSound.play()
@@ -117,5 +139,5 @@ func _on_stumps_body_entered(body: Node3D) -> void:
 
 func swing_bat():
 	var tween = create_tween()
-	tween.tween_property($Batsman/BatPivot, "rotation_degrees:y", -100, 0.12)
-	tween.tween_property($Batsman/BatPivot, "rotation_degrees:y", 0, 0.25)
+	tween.tween_property($Batsman/BatPivot, "rotation_degrees:x", 100, 0.12)
+	tween.tween_property($Batsman/BatPivot, "rotation_degrees:x", 0, 0.25)
