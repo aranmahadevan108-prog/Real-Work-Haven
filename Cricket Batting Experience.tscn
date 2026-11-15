@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cf0atku56s2fn" path="res://cricket_batting_experience.gd" id="1_c7icq"]
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2pnyr"]
+albedo_color = Color(0.9999998, 0.85488164, 0.57706267, 1)
+
 [sub_resource type="BoxMesh" id="BoxMesh_tt6d3"]
 size = Vector3(3, 1, 22)
 
@@ -21,6 +24,33 @@ radius = 0.15
 [sub_resource type="BoxShape3D" id="BoxShape3D_tt6d3"]
 size = Vector3(2, 2, 1.5)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c7icq"]
+albedo_color = Color(1, 0.3019608, 0.27450982, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_taa6u"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cwspc"]
+albedo_color = Color(0.99999994, 0.30237666, 0.27484277, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_alnqw"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 0.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2o1hl"]
+albedo_color = Color(1, 0.3019608, 0.27450982, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ovdqq"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 0.8
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ovdqq"]
+size = Vector3(0.3, 0.8, 0.2)
+
 [node name="CricketBattingExperience" type="Node3D" unique_id=1773417177]
 script = ExtResource("1_c7icq")
 
@@ -35,6 +65,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -10)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Pitch" unique_id=927126518]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.016412735, 0, 0.01013422)
+material_override = SubResource("StandardMaterial3D_2pnyr")
 mesh = SubResource("BoxMesh_tt6d3")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Pitch" unique_id=1865390535]
@@ -60,5 +91,26 @@ shape = SubResource("BoxShape3D_tt6d3")
 
 [node name="HitSound" type="AudioStreamPlayer3D" parent="." unique_id=102920177]
 
+[node name="Stumps" type="Area3D" parent="." unique_id=375045336]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 1)
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="Stumps" unique_id=1065764732]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 0, 0)
+material_override = SubResource("StandardMaterial3D_c7icq")
+mesh = SubResource("CylinderMesh_taa6u")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Stumps" unique_id=148573081]
+material_override = SubResource("StandardMaterial3D_cwspc")
+mesh = SubResource("CylinderMesh_alnqw")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Stumps" unique_id=413309582]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, 0, 0)
+material_override = SubResource("StandardMaterial3D_2o1hl")
+mesh = SubResource("CylinderMesh_ovdqq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Stumps" unique_id=965418525]
+shape = SubResource("BoxShape3D_ovdqq")
+
 [connection signal="body_entered" from="HitZone" to="." method="_on_hit_zone_body_entered"]
 [connection signal="body_exited" from="HitZone" to="." method="_on_hit_zone_body_exited"]
+[connection signal="body_entered" from="Stumps" to="." method="_on_stumps_body_entered"]

@@ -1,7 +1,7 @@
 extends Node3D
 var ball_in_zone = false
 var cooldown = 0
-
+var wickets = 0
 # Called when the node enters the scene tree for the first time.
 @onready var ball: RigidBody3D = $Ball
 @onready var ball_start: Vector3 = ball.position
@@ -94,3 +94,9 @@ func _on_hit_zone_body_entered(body: Node3D):
 
 func _on_hit_zone_body_exited(body: Node3D):
 	ball_in_zone = false
+
+
+func _on_stumps_body_entered(body: Node3D) -> void:
+	if body == $Ball:
+		wickets += 1
+		print("OUT! Wickets: ", wickets)
