@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://4nrdaam8uuax"]
+
+[ext_resource type="Script" uid="uid://cf0atku56s2fn" path="res://cricket_batting_experience.gd" id="1_c7icq"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_tt6d3"]
+size = Vector3(3, 1, 22)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dmg41"]
+size = Vector3(3, 1, 22)
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_y0775"]
+bounce = 0.6
+
+[sub_resource type="SphereMesh" id="SphereMesh_dmg41"]
+radius = 0.15
+height = 0.3
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_dmg41"]
+radius = 0.15
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_tt6d3"]
+size = Vector3(2, 2, 1.5)
+
+[node name="CricketBattingExperience" type="Node3D" unique_id=1773417177]
+script = ExtResource("1_c7icq")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=316272384]
+transform = Transform3D(1, 0, 0, 0, 0.90630776, 0.42261827, 0, -0.42261827, 0.90630776, 0, 3, 3)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=115737257]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 0, 0)
+
+[node name="Pitch" type="StaticBody3D" parent="." unique_id=1886320101]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -10)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Pitch" unique_id=927126518]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.016412735, 0, 0.01013422)
+mesh = SubResource("BoxMesh_tt6d3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pitch" unique_id=1865390535]
+shape = SubResource("BoxShape3D_dmg41")
+debug_color = Color(0, 0.6425515, 0.32110155, 0.41960785)
+
+[node name="Ball" type="RigidBody3D" parent="." unique_id=2090834004]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -19)
+physics_material_override = SubResource("PhysicsMaterial_y0775")
+continuous_cd = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball" unique_id=1764766458]
+mesh = SubResource("SphereMesh_dmg41")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball" unique_id=495894501]
+shape = SubResource("SphereShape3D_dmg41")
+
+[node name="HitZone" type="Area3D" parent="." unique_id=1376691040]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitZone" unique_id=258209474]
+shape = SubResource("BoxShape3D_tt6d3")
+
+[connection signal="body_entered" from="HitZone" to="." method="_on_hit_zone_body_entered"]
+[connection signal="body_exited" from="HitZone" to="." method="_on_hit_zone_body_exited"]
