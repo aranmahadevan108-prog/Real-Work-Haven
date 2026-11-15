@@ -1,4 +1,7 @@
 extends Node3D
+
+signal delivery_finished
+
 var ball_in_zone = false
 var cooldown = 0
 var wickets = 0
@@ -51,9 +54,11 @@ func _ready() -> void:
 	controls.add_child(bowl_button)
 
 func _bowl() -> void:
-	bowl_button.disabled = true
 	var timing := 1.0 - absf(meter.value * 2.0 - 1.0)
-	var mode := bowl_type.selected
+	bowl(bowl_type.selected, timing)
+
+func bowl(mode: int, timing: float) -> void:
+	bowl_button.disabled = true
 	var speed := lerpf(21.0, 33.0, timing) if mode == 0 else lerpf(18.0, 25.0, timing)
 	spin = [0.0, -0.9, 0.9][mode]
 
@@ -68,6 +73,7 @@ func _bowl() -> void:
 	ball.freeze = true
 	ball.position = ball_start
 	bowl_button.disabled = false
+	delivery_finished.emit()
 
 func _on_ball_bounce(body: Node) -> void:
 	if body == $Pitch and spin != 0.0:
