@@ -2,6 +2,7 @@ extends Node3D
 var ball_in_zone = false
 var cooldown = 0
 var wickets = 0
+var local_swing := true
 # Called when the node enters the scene tree for the first time.
 @onready var ball: RigidBody3D = $Ball
 @onready var ball_start: Vector3 = ball.position
@@ -64,6 +65,8 @@ func _bowl() -> void:
 	ball.sleeping = false
 
 	await get_tree().create_timer(2.5).timeout
+	ball.freeze = true
+	ball.position = ball_start
 	bowl_button.disabled = false
 
 func _on_ball_bounce(body: Node) -> void:
@@ -77,15 +80,20 @@ func _process(delta: float):
 		meter.value = pingpong(meter_time, 1.0)
 	
 	cooldown -= delta
-	if Input.is_action_just_pressed("swing") and cooldown <= 0:
-		cooldown = 1
-		if ball_in_zone:
-			print("HIT")
-			$Ball.linear_velocity = Vector3(45, 15, -40)
-			$HitSound.stream = load("res://screen-charm-recording.mp3")
-			$HitSound.play()
-		else:
-			print("MISSED")
+	if local_swing and Input.is_action_just_pressed("swing"):
+		swing()
+
+func swing() -> void:
+	if cooldown > 0:
+		return
+	cooldown = 1
+	if ball_in_zone:
+		print("HIT")
+		ball.linear_velocity = Vector3(45, 15, -40)
+		$HitSound.stream = load("res://screen-charm-recording.mp3")
+		$HitSound.play()
+	else:
+		print("MISSED")
 
 
 func _on_hit_zone_body_entered(body: Node3D):
