@@ -3,11 +3,79 @@ var ball_in_zone = false
 var cooldown = 0
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
-	$Ball.linear_velocity = Vector3(0, -2, 25)
+@onready var ball: RigidBody3D = $Ball
+@onready var ball_start: Vector3 = ball.position
 
+var bowl_type := OptionButton.new()
+var meter := HSlider.new()
+var bowl_button := Button.new()
+var meter_time := 0.0
+var spin := 0.0
+
+func _ready() -> void:
+	ball.freeze = true
+	ball.contact_monitor = true
+	ball.max_contacts_reported = 4
+	ball.body_entered.connect(_on_ball_bounce)
+
+	var hud := CanvasLayer.new()
+	add_child(hud)
+
+	var controls := VBoxContainer.new()
+	controls.position = Vector2(20, 20)
+	controls.custom_minimum_size.x = 240
+	hud.add_child(controls)
+
+	for mode in ["Pace", "Off Spin", "Leg Spin"]:
+		bowl_type.add_item(mode)
+	bowl_type.select(0)
+	bowl_type.focus_mode = Control.FOCUS_NONE
+	controls.add_child(bowl_type)
+
+	var hint := Label.new()
+	hint.text = "Fastest at the center"
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	controls.add_child(hint)
+
+	meter.max_value = 1.0
+	meter.step = 0.001
+	meter.tick_count = 3
+	meter.editable = false
+	meter.focus_mode = Control.FOCUS_NONE
+	controls.add_child(meter)
+
+	bowl_button.text = "Bowl"
+	bowl_button.focus_mode = Control.FOCUS_NONE
+	bowl_button.pressed.connect(_bowl)
+	controls.add_child(bowl_button)
+
+func _bowl() -> void:
+	bowl_button.disabled = true
+	var timing := 1.0 - absf(meter.value * 2.0 - 1.0)
+	var mode := bowl_type.selected
+	var speed := lerpf(21.0, 33.0, timing) if mode == 0 else lerpf(18.0, 25.0, timing)
+	spin = [0.0, -0.9, 0.9][mode]
+
+	ball_in_zone = false
+	ball.position = ball_start
+	ball.freeze = false
+	ball.angular_velocity = Vector3.ZERO
+	ball.linear_velocity = Vector3(0.0, -2.0, speed)
+	ball.sleeping = false
+
+	await get_tree().create_timer(2.5).timeout
+	bowl_button.disabled = false
+
+func _on_ball_bounce(body: Node) -> void:
+	if body == $Pitch and spin != 0.0:
+		ball.apply_central_impulse.call_deferred(Vector3(spin * ball.mass, 0.0, 0.0))
+		spin = 0.0
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float):
+	if not bowl_button.disabled:
+		meter_time += delta
+		meter.value = pingpong(meter_time, 1.0)
+	
 	cooldown -= delta
 	if Input.is_action_just_pressed("swing") and cooldown <= 0:
 		cooldown = 1
