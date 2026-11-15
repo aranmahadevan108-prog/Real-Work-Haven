@@ -126,7 +126,3 @@ func _leave(message: String) -> void:
 	over_label.hide()
 	lobby.show()
 	status.text = message
-func swing_bat():
-	var tween = create_tween()
-	tween.tween_property($Batsman/BatPivot, "rotation_degrees:y", -100, 0.12)
-	tween.tween_property($Batsman/BatPivot, "rotation_degrees:y", 0, 0.25)
