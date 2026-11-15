@@ -53,6 +53,13 @@ func _ready() -> void:
 	bowl_button.pressed.connect(_bowl)
 	controls.add_child(bowl_button)
 
+	if local_swing:
+		var swing_button := Button.new()
+		swing_button.text = "Swing (Space)"
+		swing_button.focus_mode = Control.FOCUS_NONE
+		swing_button.pressed.connect(swing)
+		controls.add_child(swing_button)
+
 func _bowl() -> void:
 	var timing := 1.0 - absf(meter.value * 2.0 - 1.0)
 	bowl(bowl_type.selected, timing)
